@@ -1,0 +1,174 @@
+body {
+    background-color: #000000;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin-top: 100px;
+}
+
+h1 {
+    font-size: 40px;
+}
+
+p {
+    font-size: 20px;
+}
+
+#palavra {
+    font-size: 24px;
+    margin: 30px 0;
+}
+
+input {
+    font-size: 16px;
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+#mensagem {
+    margin-top: 20px;
+    color: #22c55e;
+    font-size: 14px;
+}
+
+h2 {
+   margin-top: 10px;
+   font-size: 18px;
+}
+
+#area-jogo {
+    position: relative;
+    width: 900px;
+    height: 500px;
+    border: 2px solid white;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+.palavra-caindo {
+    position: absolute;
+    font-size: 18px;
+    color: white;
+    transition: transform 0.1s, color 0.1s;
+}
+
+/* Palavra em foco (opcional para destacar) */
+.ativa {
+    color: yellow;
+    text-shadow: 0 0 10px yellow;
+}
+
+/* 💥 Efeito de dano */
+.dano {
+    color: #ff0000 !important;
+    animation: shake 0.2s;
+    transform: scale(1.1);
+}
+
+/* Animação de tremida */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+}
+
+#btn-reiniciar {
+    display: none;
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    background-color: #ef4444;
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 0 10px #ef4444;
+    text-shadow: 0 0 5px white;
+}
+
+#btn-reiniciar:hover {
+    background-color: #22c55e;
+    transform: scale(1.05);
+}
+
+/* Letras já acertadas */
+.letra-certa {
+    color: #22c55e;
+    text-shadow: 0 0 8px #22c55e;
+}
+
+/* Efeito quando completa a palavra */
+.completo {
+    color: #22c55e !important;
+    text-shadow: 0 0 15px #22c55e;
+    transform: scale(1.1);
+    transition: 0.2s;
+}
+
+/* 💥 Explosão ao completar */
+.explodir {
+    animation: explosao 0.4s forwards;
+}
+
+@keyframes explosao {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* ✨ Partículas */
+.particula {
+    position: absolute;
+    font-size: 12px;
+    color: #22c55e;
+    pointer-events: none;
+    animation: particulaAnim 0.6s forwards;
+}
+
+@keyframes particulaAnim {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y));
+    }
+}
+
+/* 🚀 Nave do jogador */
+#jogador {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    z-index: 10;
+}
+
+/* 🔫 Tiros */
+.tiro {
+    position: absolute;
+    font-size: 14px;
+    color: #22c55e;
+}
+
+/* 🛸 Nave inimiga */
+.nave-inimiga {
+    position: absolute;
+    font-size: 20px;
+}
