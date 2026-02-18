@@ -90,9 +90,3 @@ p {
 img {
     image-rendering: pixelated;
 }
-
-#input-mobile {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}

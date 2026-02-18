@@ -17,24 +17,62 @@ let digitado = "";
    🚀 GARANTE JOGADOR
 ========================= */
 let jogador = document.getElementById("jogador");
-if (jogador) {
-    jogador.innerHTML = '<img src="assets/player.png" class="sprite-player">';
-}
+jogador.innerHTML = '<img src="assets/player.png" class="sprite-player">';
 
 /* =========================
    🎮 TECLADO
 ========================= */
-const inputMobile = document.getElementById("input-mobile");
+document.addEventListener("keydown", (event) => {
+
+    if (!jogoAtivo) return;
+
+    const letra = event.key.toLowerCase();
+    if (!/^[a-z]$/.test(letra)) return;
+
+    const palavrasNaTela = document.querySelectorAll(".palavra-caindo");
+
+    if (!palavraAtiva) {
+        palavrasNaTela.forEach(p => {
+            if (p.dataset.original.startsWith(letra) && !palavraAtiva) {
+                palavraAtiva = p;
+                digitado = letra;
+                atualizarPalavra();
+            }
+        });
+        return;
+    }
+
+    digitado += letra;
+    atualizarPalavra();
+});
+/* =========================
+   📱 INPUT MOBILE INVISÍVEL
+========================= */
+let inputMobile = document.getElementById("input-mobile");
+if (!inputMobile) {
+    inputMobile = document.createElement("input");
+    inputMobile.type = "text";
+    inputMobile.id = "input-mobile";
+    inputMobile.autocapitalize = "none";
+    inputMobile.autocomplete = "off";
+    inputMobile.spellcheck = false;
+    inputMobile.style.position = "absolute";
+    inputMobile.style.opacity = 0;
+    inputMobile.style.height = 0;
+    inputMobile.style.width = 0;
+    inputMobile.style.zIndex = -1;
+    document.body.appendChild(inputMobile);
+}
 
 /* =========================
-   📱 FOCO AUTOMÁTICO
+   📱 FOCO AUTOMÁTICO MOBILE
 ========================= */
 function focarInput() {
     if (inputMobile) inputMobile.focus();
 }
-
 window.addEventListener("load", focarInput);
-if (areaJogo) areaJogo.addEventListener("click", focarInput);
+areaJogo.addEventListener("click", focarInput);
+window.addEventListener("touchstart", focarInput);
 
 /* =========================
    ⌨️ TECLADO DESKTOP
@@ -51,59 +89,41 @@ document.addEventListener("keydown", (event) => {
 /* =========================
    📱 TECLADO MOBILE
 ========================= */
-if (inputMobile) {
-    inputMobile.addEventListener("input", (event) => {
-        if (!jogoAtivo) return;
+inputMobile.addEventListener("input", (event) => {
+    if (!jogoAtivo) return;
 
-        const letra = event.target.value.slice(-1).toLowerCase();
-        event.target.value = "";
+    const letra = event.target.value.slice(-1).toLowerCase();
+    event.target.value = "";
 
-        if (!/^[a-z]$/.test(letra)) return;
+    if (!/^[a-z]$/.test(letra)) return;
 
-        processarLetra(letra);
-    });
-}
-
-/* =========================
-   🔠 PROCESSAR LETRA
-========================= */
-function processarLetra(letra) {
-    const palavrasNaTela = document.querySelectorAll(".palavra-caindo");
-
-    if (!palavraAtiva) {
-        palavrasNaTela.forEach(p => {
-            if (p.dataset.original.startsWith(letra) && !palavraAtiva) {
-                palavraAtiva = p;
-                digitado = letra;
-                atualizarPalavra();
-            }
-        });
-        return;
-    }
-
-    digitado += letra;
-    atualizarPalavra();
-}
-
+    processarLetra(letra);
+});
 /* =========================
    ✏️ ATUALIZA PALAVRA
 ========================= */
 function atualizarPalavra() {
+
     if (!palavraAtiva) return;
 
     const original = palavraAtiva.dataset.original;
 
     if (original.startsWith(digitado)) {
+
         dispararTiro(palavraAtiva);
 
+        // 💥 efeito de dano
         palavraAtiva.classList.add("dano");
         setTimeout(() => {
             palavraAtiva?.classList.remove("dano");
         }, 150);
 
-        palavraAtiva.textContent = original.substring(digitado.length);
+        // 🔥 remove letras já digitadas
+        palavraAtiva.textContent =
+            original.substring(digitado.length);
 
         if (digitado === original) {
+
             destruirInimigo(palavraAtiva);
 
             palavraAtiva = null;
@@ -114,6 +134,7 @@ function atualizarPalavra() {
         }
 
     } else {
+
         palavraAtiva.classList.add("dano");
 
         setTimeout(() => {
@@ -128,6 +149,7 @@ function atualizarPalavra() {
    🔫 TIRO QUE SEGUE O ALVO
 ========================= */
 function dispararTiro(alvo) {
+
     const tiro = document.createElement("div");
     tiro.innerHTML = '<img src="assets/bullet.png" class="sprite-bullet">';
     tiro.classList.add("tiro");
@@ -144,6 +166,7 @@ function dispararTiro(alvo) {
     tiro.style.top = startY + "px";
 
     const intervalo = setInterval(() => {
+
         if (!areaJogo.contains(alvo)) {
             clearInterval(intervalo);
             tiro.remove();
@@ -151,12 +174,15 @@ function dispararTiro(alvo) {
         }
 
         const alvoRect = alvo.getBoundingClientRect();
+
         const targetX = alvoRect.left - areaRect.left + alvoRect.width / 2;
         const targetY = alvoRect.top - areaRect.top + alvoRect.height / 2;
 
         let dx = targetX - startX;
         let dy = targetY - startY;
+
         const distancia = Math.sqrt(dx * dx + dy * dy);
+
         const velocidade = 10;
 
         startX += (dx / distancia) * velocidade;
@@ -169,6 +195,7 @@ function dispararTiro(alvo) {
             clearInterval(intervalo);
             tiro.remove();
         }
+
     }, 20);
 }
 
@@ -176,7 +203,10 @@ function dispararTiro(alvo) {
    💥 DESTRUIR INIMIGO
 ========================= */
 function destruirInimigo(palavra) {
+
     const nave = palavra.naveInimiga;
+
+    // para o movimento dela
     clearInterval(palavra.intervalo);
 
     palavra.classList.add("explodir");
@@ -192,6 +222,7 @@ function destruirInimigo(palavra) {
    👾 CRIAR PALAVRA + NAVE
 ========================= */
 function criarPalavra() {
+
     const texto = palavras[Math.floor(Math.random() * palavras.length)];
 
     const span = document.createElement("span");
@@ -218,6 +249,7 @@ function criarPalavra() {
     areaJogo.appendChild(nave);
 
     const intervalo = setInterval(() => {
+
         if (!jogoAtivo || !areaJogo.contains(span)) {
             clearInterval(intervalo);
             return;
@@ -228,7 +260,9 @@ function criarPalavra() {
 
         let dx = jogadorRect.left - spanRect.left;
         let dy = jogadorRect.top - spanRect.top;
+
         const distancia = Math.sqrt(dx * dx + dy * dy);
+
         const velocidade = 1.5;
 
         startX += (dx / distancia) * velocidade;
@@ -240,12 +274,15 @@ function criarPalavra() {
         nave.style.left = startX + "px";
         nave.style.top = startY - 30 + "px";
 
-        // colisão real
-        if (spanRect.bottom >= jogadorRect.top &&
+        // colisão REAL usando bounding box
+        if (
+            spanRect.bottom >= jogadorRect.top &&
             spanRect.right >= jogadorRect.left &&
-            spanRect.left <= jogadorRect.right) {
+            spanRect.left <= jogadorRect.right
+        ) {
 
             clearInterval(intervalo);
+
             span.remove();
             nave.remove();
 
@@ -257,6 +294,7 @@ function criarPalavra() {
 
     }, 20);
 
+    // salva intervalo dentro da palavra
     span.intervalo = intervalo;
 }
 
@@ -273,6 +311,7 @@ function fimDeJogo() {
    🔄 REINICIAR
 ========================= */
 btnReiniciar.addEventListener("click", () => {
+
     vidas = 3;
     pontos = 0;
     jogoAtivo = true;
