@@ -1,3 +1,6 @@
+/* =========================
+   🌌 BASE
+========================= */
 body {
     background-color: #000;
     color: white;
@@ -10,42 +13,88 @@ body {
     align-items: center;
 }
 
-/* Títulos */
+/* =========================
+   🏷 TÍTULOS
+========================= */
 h1 {
-    font-size: 32px;
-    margin: 15px 0 5px 0;
+    font-size: 28px;
+    margin: 10px 0 5px 0;
     text-align: center;
 }
 
 h2 {
-    font-size: 16px;
+    font-size: 14px;
     margin: 5px 0;
     text-align: center;
 }
 
 p {
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
 }
 
-/* Área do jogo responsiva */
+/* =========================
+   🎮 ÁREA DO JOGO 9:16
+========================= */
 #area-jogo {
     position: relative;
-    height: 90vh;        
-    aspect-ratio: 9 / 16;
+    height: 90vh;              /* controla pela altura */
+    aspect-ratio: 9 / 16;      /* 🔥 proporção vertical */
     max-width: 500px;
     border: 2px solid white;
     overflow: hidden;
+    margin-top: 10px;
 }
 
-/* Palavras */
+/* =========================
+   🔤 PALAVRAS
+========================= */
 .palavra-caindo {
     position: absolute;
-    font-size: 18px;
+    font-size: 16px;
     color: white;
+    transition: color 0.08s, text-shadow 0.08s, transform 0.08s;
 }
 
-/* Jogador */
+/* =========================
+   💥 DANO (VERMELHO)
+========================= */
+.palavra-caindo.dano {
+    color: #ff2d2d !important;
+    text-shadow: 0 0 10px #ff2d2d, 0 0 20px #ff2d2d;
+    animation: shake 0.2s;
+}
+
+.nave-inimiga.dano {
+  filter: drop-shadow(0 0 8px #ff2d2d);
+}
+
+/* Tremida */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+}
+
+/* =========================
+   💀 EXPLOSÃO
+========================= */
+.explodir {
+    animation: explosao 0.4s forwards;
+}
+
+@keyframes explosao {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+/* =========================
+   🚀 JOGADOR
+========================= */
 #jogador {
     position: absolute;
     bottom: 15px;
@@ -54,17 +103,23 @@ p {
     z-index: 10;
 }
 
-/* Tiro */
+/* =========================
+   🔫 TIROS
+========================= */
 .tiro {
     position: absolute;
 }
 
-/* Nave inimiga */
+/* =========================
+   👾 NAVE INIMIGA
+========================= */
 .nave-inimiga {
     position: absolute;
 }
 
-/* Sprites */
+/* =========================
+   🎨 SPRITES
+========================= */
 .sprite-player {
     width: 32px;
     height: auto;
@@ -80,6 +135,7 @@ p {
     height: auto;
 }
 
+/* Impede interação nas imagens */
 #jogador img,
 .nave-inimiga img,
 .tiro img {
@@ -87,6 +143,29 @@ p {
     user-select: none;
 }
 
+/* Pixel art nítida */
 img {
     image-rendering: pixelated;
+}
+
+/* =========================
+   🔄 BOTÃO REINICIAR
+========================= */
+#btn-reiniciar {
+    display: none;
+    margin-top: 15px;
+    padding: 10px 18px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    background-color: #ef4444;
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 0 10px #ef4444;
+}
+
+#btn-reiniciar:hover {
+    background-color: #22c55e;
+    transform: scale(1.05);
 }
