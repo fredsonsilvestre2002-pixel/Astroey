@@ -100,7 +100,7 @@ p {
     bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 1;
 }
 
 /* =========================
@@ -123,6 +123,8 @@ p {
 .sprite-player {
     width: 32px;
     height: auto;
+    position: relative;
+    z-index: 2;         
 }
 
 .sprite-enemy {
@@ -168,4 +170,30 @@ img {
 #btn-reiniciar:hover {
     background-color: #22c55e;
     transform: scale(1.05);
+}
+
+/* =========================
+   🔥 CHAMA DA TURBINA
+========================= */
+.sprite-thruster {
+  position: absolute;
+  left: 50%;
+  bottom: -7px;              /* desce a chama pra fora da nave */
+  transform: translateX(-50%);
+  width: 13px;                /* ajuste pro tamanho do seu gif */
+  height: auto;
+
+  z-index: 4;                 /* chama */
+  pointer-events: none;
+  user-select: none;
+
+  image-rendering: auto;      /* GIF normalmente fica melhor sem pixelated */
+}
+
+.explosao {
+  position: absolute;
+  width: 90px;
+  height: auto;
+  pointer-events: none;
+  z-index: 100;
 }

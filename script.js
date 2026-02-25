@@ -17,7 +17,10 @@ let digitado = "";
    🚀 JOGADOR (SPRITE)
 ========================= */
 let jogador = document.getElementById("jogador");
-jogador.innerHTML = '<img src="assets/player.png" class="sprite-player">';
+jogador.innerHTML = `
+  <img src="assets/player.png" class="sprite-player">
+  <img src="assets/thruster.gif" class="sprite-thruster" alt="">
+`;
 
 /* =========================
    📱 INPUT MOBILE INVISÍVEL
@@ -236,12 +239,81 @@ function aplicarDanoNoAlvo(palavra) {
 }
 
 /* =========================
+   💥 CRIAR EXPLOSÃO
+========================= */
+function criarExplosaoNaNave(nave) {
+  if (!nave || !areaJogo.contains(nave)) return;
+
+  const explosao = document.createElement("img");
+  explosao.src = "assets/explosion_enemy.gif"; //
+  explosao.classList.add("explosao");
+
+  // posição: centro da nave (mais preciso que offset)
+  const areaRect = areaJogo.getBoundingClientRect();
+  const naveRect = nave.getBoundingClientRect();
+
+  const cx = naveRect.left - areaRect.left + naveRect.width / 2;
+  const cy = naveRect.top - areaRect.top + naveRect.height / 2;
+
+  explosao.style.left = cx + "px";
+  explosao.style.top = cy + "px";
+  explosao.style.transform = "translate(-50%, -50%)"; // centraliza
+
+  areaJogo.appendChild(explosao);
+
+  // remove depois que o gif "terminar" (ajuste se precisar)
+  setTimeout(() => {
+    explosao.remove();
+  }, 600);
+
+}
+
+/* =========================
+   💥 EXPLOSÃO DO PLAYER
+========================= */
+function explodirPlayer() {
+  return new Promise((resolve) => {
+    if (!jogador) {
+      resolve();
+      return;
+    }
+
+    const areaRect = areaJogo.getBoundingClientRect();
+    const jogadorRect = jogador.getBoundingClientRect();
+
+    const cx = jogadorRect.left - areaRect.left + jogadorRect.width / 2;
+    const cy = jogadorRect.top - areaRect.top + jogadorRect.height / 2;
+
+    const explosao = document.createElement("img");
+    explosao.src = "assets/explosion_player.gif";
+    explosao.classList.add("explosao");
+
+    explosao.style.left = cx + "px";
+    explosao.style.top = cy + "px";
+    explosao.style.transform = "translate(-50%, -50%)";
+
+    areaJogo.appendChild(explosao);
+
+    // esconde a nave
+    jogador.style.visibility = "hidden";
+
+    // tempo que a explosão fica na tela
+    setTimeout(() => {
+      explosao.remove();
+      resolve(); // ✅ agora existe e funciona
+    }, 2000);
+  });
+}
+
+/* =========================
    💥 DESTRUIR INIMIGO
 ========================= */
 function destruirInimigo(palavra) {
   const nave = palavra.naveInimiga;
 
-  clearInterval(palavra.intervalo);
+  clearInterval(palavra.intervalo); // ✅ ADICIONE ESTA LINHA
+
+  criarExplosaoNaNave(nave);
 
   palavra.classList.add("explodir");
   nave.classList.add("explodir");
@@ -337,14 +409,20 @@ function criarPalavra() {
 /* =========================
    💀 GAME OVER
 ========================= */
-function fimDeJogo() {
+async function fimDeJogo() {
   jogoAtivo = false;
-  mensagem.textContent = "GAME OVER";
-  btnReiniciar.style.display = "inline-block";
+
+  await explodirPlayer(); // ✅ espera terminar a explosão
+
+  // espera mais um pouquinho antes de mostrar o GAME OVER (opcional)
+  setTimeout(() => {
+    mensagem.textContent = "GAME OVER";
+    btnReiniciar.style.display = "inline-block";
+  }, 500);
 }
 
 /* =========================
-   🔄 REINICIAR
+   🔄 CONTINUAR / REINICIAR
 ========================= */
 btnReiniciar.addEventListener("click", () => {
   vidas = 3;
@@ -358,9 +436,12 @@ btnReiniciar.addEventListener("click", () => {
   palavraAtiva = null;
   digitado = "";
 
-  document.querySelectorAll(".palavra-caindo").forEach(e => e.remove());
-  document.querySelectorAll(".nave-inimiga").forEach(e => e.remove());
-  document.querySelectorAll(".tiro").forEach(e => e.remove());
+  document.querySelectorAll(".palavra-caindo").forEach((e) => e.remove());
+  document.querySelectorAll(".nave-inimiga").forEach((e) => e.remove());
+  document.querySelectorAll(".tiro").forEach((e) => e.remove());
+  document.querySelectorAll(".explosao").forEach((e) => e.remove());
+
+  jogador.style.visibility = "visible";
 
   btnReiniciar.style.display = "none";
   focarInput();
